@@ -845,13 +845,14 @@ go
 set quoted_identifier on
 go
 
-create procedure [dbo].[spRegistrarUsuario] 
+alter procedure [dbo].[spRegistrarUsuario] 
 (
 @cedula varchar(50),
 @nombre varchar(50),
 @apellido varchar(50),
 @correo varchar(100),
-@fecha char (1),
+@genero char(1),
+@fecha DATE,
 @clave varchar (100),
 @retorno int output,
 @mensaje varchar(100) output
@@ -870,22 +871,20 @@ begin
 	begin
 		
 		-- obtiene emp_no siguietnte
-		select @id_ultimoEmployess = max (emp_no) +1 from employees
+		--select @id_ultimoEmployess = max (emp_no) +1 from employees
 
 		-- inserta nuevo empleado
-		insert into employees(emp_no, birth_date, first_name, last_name, gender, hire_date, correo, ci) 
-		values (@id_ultimoEmployess , getdate(), @nombre, @apellido, @fecha, getdate(), @correo, @cedula)
+		insert into employees(birth_date, first_name, last_name, gender, hire_date, correo, ci) 
+		values ( getdate(), @nombre, @apellido, @genero, @fecha,  @correo, @cedula)
 		
 		-- para obtener id insertado
 		select @id=emp_no from employees where correo=@correo and ci=@cedula
 
 		-- genera usuario desde correo
 		Select @pos1=CHARINDEX ('.', @correo)+1, 
-		@pos2=CHARINDEX ('@', @correo)-@pos1
+		@pos2=CHARINDEX ('@', @correo)-@pos1,@usuario = CONCAT(SUBSTRING(@correo, 1,1), SUBSTRING(@correo, @pos1, @pos2))
 
-		select @usuario = concat (substring(@correo, 1,1) , 
-		SUBSTRING (@correo, @pos1, @pos2))
-
+		
 		--inserta em la tabla users
 		insert into users(emp_no, usuario, clave) values (@id, @usuario, @clave)
 
@@ -903,3 +902,4 @@ begin
 	end
 end
 
+select * from employees e join users u on e.emp_no=u.emp_no
