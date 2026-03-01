@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Registro";
+}
+
+<link href="~/Content/css/Registro.css?v=5" rel="stylesheet" />
+
+<div class="contenedor-login">
+
+    <form action="@Url.Action("Autenticar","Acceso")" method="post" class="form-register">
+
+        <h2 class="form-titulo">REGISTRO</h2>
+
+        <div class="contenedor-inputs">
+
+            <input type="text" name="cedula" placeholder="Identificación" class="input-48" required>
+            <input type="text" name="nombre" placeholder="Nombre" class="input-48" required>
+            <input type="text" name="apellido" placeholder="Apellido" class="input-48" required>
+            <input type="text" name="correo" placeholder="Correo" class="input-48" required>
+            <input type="date" name="FechaNacimiento" class="input-48" required>
+            <input type="password" name="clave" placeholder="Contraseña" class="input-48" required>
+
+            <select name="genero" class="input-100">
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+            </select>
+
+            <input type="submit" value="Registrar" class="btn-enviar">
+
+            <p class="form-link">
+                Ya tienes una cuenta?
+                @Html.ActionLink("Ingresa aquí", "Autenticar", "Acceso", null, new { @class = "nav-link" })
+            </p>
+
+        </div>
+
+    </form>
+
+</div>

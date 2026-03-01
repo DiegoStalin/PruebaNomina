@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewBag.Title = "Autenticar";
+}
+
+<link href="~/Content/css/Autenticar.css?v=5" rel="stylesheet" />
+
+<div class="contenedor-login">
+    <form action="@Url.Action("Autenticar","Acceso")" method="post">
+
+        <h1>Acceso para Empleados</h1>
+
+        <div class="inset">
+            <p>
+                <label for="correo">USUARIO</label>
+                <input type="text" name="correo" id="correo">
+            </p>
+            <p>
+                <label for="password">CLAVE</label>
+                <input type="password" name="clave" id="clave"> 
+            </p>
+            <p>
+
+            </p>
+        </div>
+
+        <p class="p-container">
+            <span>
+                @Html.ActionLink("Registrar", "Registro", "Acceso", null, new { @class = "nav-link" })
+            </span>
+            <input type="submit" value="Log In">
+        </p>
+
+    </form>
+</div>
