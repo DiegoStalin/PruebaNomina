@@ -1,21 +1,25 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // Necesario para [Table]
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.ComponentModel.DataAnnotations; // Necesario para [Key] y [Required]
 
 namespace WebAppNomina.Models
 {
-    [Table("Usuarios")] // Mapeo exacto a tu tabla en SQL
     public class Usuario
     {
         [Key]
-        public int emp_no { get; set; }
+        public int id { get; set; }
 
         [Required(ErrorMessage = "El nombre de usuario es obligatorio")]
-        public string usuario { get; set; }
+        [StringLength(50)]
+        public string username { get; set; }
 
-        [Required(ErrorMessage = "La clave es obligatoria")]
-        public string clave { get; set; }
+        [Required(ErrorMessage = "La contraseña es obligatoria")]
+        [DataType(DataType.Password)]
+        public string password { get; set; }
 
+        [StringLength(20)]
         public string rol { get; set; }
     }
 }
