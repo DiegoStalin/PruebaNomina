@@ -1,0 +1,83 @@
+﻿
+@model IEnumerable<WebAppNomina.Models.Empleado>
+
+@{
+    ViewBag.Title = "Gestión de Empleados";
+}
+
+@* Vinculamos un CSS para que se vea ordenado *@
+<style>
+    .contenedor-personalizado {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .btn-desactivar {
+        background-color: #d9534f;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="contenedor-personalizado">
+    <h2><i class="glyphicon glyphicon-user"></i> @ViewBag.Title</h2>
+    <hr />
+
+    <div class="well">
+        @using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new { @class = "form-inline" }))
+        {
+            <div class="form-group">
+                <input type="text" name="buscar" class="form-control" placeholder="Buscar por Nombre o CI..." style="width: 300px;" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="glyphicon glyphicon-search"></i> Consultar
+            </button>
+        }
+    </div>
+
+    <p>
+        @Html.ActionLink("Registrar Nuevo Empleado", "Create", null, new { @class = "btn btn-success" })
+    </p>
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>CI</th>
+                <th>Nombre Completo</th>
+                <th>Fecha Ingreso</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ci</td>
+                    <td>@item.first_name @item.last_name</td>
+                    <td>@item.hire_date.ToShortDateString()</td>
+                    <td>@item.correo</td>
+                    <td>
+                        @Html.ActionLink("Editar", "Edit", new { id = item.emp_no }, new { @class = "btn btn-info btn-xs" }) |
+
+                        @using (Html.BeginForm("Delete", "Empleado", new { id = item.emp_no }, FormMethod.Post, new { style = "display:inline;" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-desactivar btn-xs" onclick="return confirm('¿Está seguro de desactivar este registro?');">
+                                <i class="glyphicon glyphicon-off"></i> Desactivar
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
