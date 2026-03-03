@@ -151,6 +151,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AsignacionDepto.cs" />
+    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\Titulo.cs" />
     <Compile Include="Models\GerenteDepto.cs" />
     <Compile Include="Models\LogAuditoriaSalario.cs" />
@@ -158,7 +159,6 @@
     <Compile Include="Models\Departamento.cs" />
     <Compile Include="Models\Empleado.cs" />
     <Compile Include="Models\Salary.cs" />
-    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
