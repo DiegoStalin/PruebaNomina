@@ -17,7 +17,6 @@
         </footer>
     </div>
 
-    <!-- Navbar abajo -->
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container justify-content-center">
             <ul class="navbar-nav">
@@ -27,6 +26,11 @@
                 <li class="nav-item">
                     @Html.ActionLink("Inicio", "Index", "Home", null, new { @class = "nav-link" })
                 </li>
+
+                <li class="nav-item">
+                    @Html.ActionLink("Salarios", "Index", "Salario", null, new { @class = "nav-link" })
+                </li>
+
                 <li class="nav-item">
                     @Html.ActionLink("Acerca de", "About", "Home", null, new { @class = "nav-link" })
                 </li>

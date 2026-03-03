@@ -1,0 +1,41 @@
+﻿
+@model IEnumerable<WebAppNomina.Models.GerenteDepto>
+
+<div class="container" style="margin-top:20px;">
+    <h2 class="text-primary"><i class="glyphicon glyphicon-user"></i> Gerentes por Departamento</h2>
+    <p>
+        @Html.ActionLink("Asignar Nuevo Gerente", "Create", null, new { @class = "btn btn-success" })
+    </p>
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr class="info">
+                <th>Nombre del Manager</th>
+                <th>Departamento</th>
+                <th>Desde</th>
+                <th>Hasta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.Empleado.first_name @item.Empleado.last_name</strong></td>
+                    <td>@item.Departamento.dept_name</td>
+                    <td>@item.from_date.ToShortDateString()</td>
+                    <td>@item.to_date.ToShortDateString()</td>
+                    <td>
+                        @using (Html.BeginForm("Delete", "GerenteDepto", new { id = item.id }, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este nombramiento?');">
+                                <i class="glyphicon glyphicon-trash"></i> Quitar
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

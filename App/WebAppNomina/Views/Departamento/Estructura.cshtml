@@ -1,0 +1,36 @@
+﻿@model IEnumerable<WebAppNomina.Models.Departamento>
+
+<div class="container" style="margin-top:20px;">
+    <div class="row">
+        <div class="col-md-8">
+            <h2><i class="glyphicon glyphicon-tree-conifer"></i> Estructura Organizacional (RF-09c)</h2>
+        </div>
+        <div class="col-md-4 text-right" style="margin-top:20px;">
+            @Html.ActionLink(" Volver al Historial", "Index", "Salario", null, new { @class = "btn btn-default" })
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        @foreach (var depto in Model)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #343a40; color: white;">
+                        <i class="glyphicon glyphicon-folder-open"></i>
+                        <strong>@depto.dept_name</strong>
+                    </div>
+                    <div class="panel-body">
+                        <p><strong>Código:</strong> @depto.dept_no</p>
+                        <p class="text-muted">
+                            <small>
+                                <i class="glyphicon glyphicon-info-sign"></i>
+                                Información de personal disponible en el reporte de Nómina por Depto.
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
