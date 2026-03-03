@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using WebAppNomina.Models;
+using WebAppNomina.DAL;
 
 namespace WebAppNomina.Controllers
 {
     public class DepartamentoController : Controller
     {
-        // GET: Departamento
+        private NominaContext db = new NominaContext();
+
+        // GET: Departamento (Lista de departamentos activos)
         public ActionResult Index()
         {
-            return View();
-        }
-
-        // GET: Departamento/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
+            // Filtramos solo los que están activos
+            var departamentos = db.Departamentos.Where(d => d.activo == true).ToList();
+            return View(departamentos);
         }
 
         // GET: Departamento/Create
@@ -28,62 +28,54 @@ namespace WebAppNomina.Controllers
 
         // POST: Departamento/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Departamento oDepartamento)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
-
+                oDepartamento.activo = true; // Se crea como activo por defecto
+                db.Departamentos.Add(oDepartamento);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View(oDepartamento);
         }
 
         // GET: Departamento/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var oDept = db.Departamentos.Find(id);
+            if (oDept == null) return HttpNotFound();
+            return View(oDept);
         }
 
         // POST: Departamento/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Departamento oDepartamento)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
-
+                db.Entry(oDepartamento).State = EntityState.Modified;
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View(oDepartamento);
         }
 
-        // GET: Departamento/Delete/5
-        public ActionResult Delete(int id)
+        // POST: Departamento/Delete/5 (Borrado Lógico)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
         {
-            return View();
-        }
-
-        // POST: Departamento/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
+            var oDept = db.Departamentos.Find(id);
+            if (oDept != null)
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                oDept.activo = false; // Desactivar en lugar de borrar físicamente
+                db.Entry(oDept).State = EntityState.Modified;
+                db.SaveChanges();
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
         }
     }
 }

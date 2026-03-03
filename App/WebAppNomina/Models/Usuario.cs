@@ -1,89 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // Necesario para [Table]
 
 namespace WebAppNomina.Models
 {
-    public class Usuario : Controller
+    [Table("Usuarios")] // Mapeo exacto a tu tabla en SQL
+    public class Usuario
     {
-        // GET: Usuario
-        public ActionResult Index()
-        {
-            return View();
-        }
+        [Key]
+        public int emp_no { get; set; }
 
-        // GET: Usuario/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+        [Required(ErrorMessage = "El nombre de usuario es obligatorio")]
+        public string usuario { get; set; }
 
-        // GET: Usuario/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        [Required(ErrorMessage = "La clave es obligatoria")]
+        public string clave { get; set; }
 
-        // POST: Usuario/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Usuario/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Usuario/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Usuario/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Usuario/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        public string rol { get; set; }
     }
 }

@@ -1,0 +1,57 @@
+﻿
+@model WebAppNomina.Models.Titulo
+
+<div class="container" style="margin-top:20px;">
+    <h2>Asignar Título al Empleado</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal well">
+            <h4>Información del Cargo</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Empleado:</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("emp_no", null, "-- Seleccione Empleado --", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.emp_no, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Nombre del Cargo:</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.title, new { htmlAttributes = new { @class = "form-control", placeholder = "Ej: Senior Developer" } })
+                    @Html.ValidationMessageFor(model => model.title, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Fecha Inicio:</label>
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.from_date, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                    @Html.ValidationMessageFor(model => model.from_date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Fecha Fin:</label>
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.to_date, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                    @Html.ValidationMessageFor(model => model.to_date, "", new { @class = "text-danger" })
+                    <span class="help-block">Dejar vacío si es el cargo actual.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Guardar Cargo" class="btn btn-primary" />
+                    @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-default" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
