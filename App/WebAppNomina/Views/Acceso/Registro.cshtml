@@ -10,8 +10,17 @@
 
         <h2 class="form-titulo">REGISTRO</h2>
 
+        @* BLOQUE NUEVO: Muestra errores de SQL o C# si el registro falla *@
+        @if (ViewData["Mensaje"] != null)
+        {
+            <div style="background-color: #f8d7da; color: #721c24; padding: 15px; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px; text-align: center; font-family: sans-serif;">
+                <strong>Aviso:</strong> @ViewData["Mensaje"]
+            </div>
+        }
+
         <div class="contenedor-inputs">
 
+            @* IMPORTANTE: Los nombres 'name' coinciden exactamente con el controlador que te pasé *@
             <input type="text" name="cedula" placeholder="Identificación" class="input-48" required>
             <input type="text" name="nombre" placeholder="Nombre" class="input-48" required>
             <input type="text" name="apellido" placeholder="Apellido" class="input-48" required>

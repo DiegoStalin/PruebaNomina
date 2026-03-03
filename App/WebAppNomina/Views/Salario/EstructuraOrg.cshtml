@@ -1,0 +1,23 @@
+﻿@model IEnumerable<WebAppNomina.Models.Departamento>
+
+<div class="container" style="margin-top:20px;">
+    <h2><i class="glyphicon glyphicon-tree-conifer"></i> Estructura Organizacional</h2>
+    <hr />
+    <div class="row">
+        @foreach (var depto in Model)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #333; color: white;">
+                        <strong>@depto.dept_name</strong>
+                    </div>
+                    <div class="panel-body">
+                        <p><strong>Código:</strong> @depto.dept_no</p>
+                        <p class="text-muted"><small>Información de empleados en Nómina por Depto.</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @Html.ActionLink("Volver al Historial", "Index", null, new { @class = "btn btn-default" })
+</div>
