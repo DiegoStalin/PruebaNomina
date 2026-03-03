@@ -135,6 +135,9 @@
     <Compile Include="Controllers\TituloController.cs" />
     <Compile Include="DAL\NominaContext.cs" />
     <Compile Include="DAL\Conexion.cs" />
+    <Compile Include="DAL\DepartamentoDAL.cs" />
+    <Compile Include="DAL\EmpleadoDAL.cs" />
+    <Compile Include="DAL\SalarioDAL.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -155,6 +158,8 @@
     <Compile Include="Models\Salario.cs" />
     <Compile Include="Models\Departamento.cs" />
     <Compile Include="Models\Empleado.cs" />
+    <Compile Include="Models\Salary.cs" />
+    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +239,16 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\AccesoControlador\" />
+    <Folder Include="Views\Asignacion\" />
+    <Folder Include="Views\DepartamentoDAL\" />
+    <Folder Include="Views\Departamento\" />
+    <Folder Include="Views\DeptEmp\" />
+    <Folder Include="Views\EmpleadoDAL\" />
+    <Folder Include="Views\Empleado\" />
+    <Folder Include="Views\SalarioDAL\" />
+    <Folder Include="Views\Salario\" />
+    <Folder Include="Views\Salary\" />
+    <Folder Include="Views\Usuario\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
