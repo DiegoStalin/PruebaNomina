@@ -131,6 +131,7 @@
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\GerenteDeptoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OpcionesController.cs" />
     <Compile Include="Controllers\SalarioController.cs" />
     <Compile Include="Controllers\TituloController.cs" />
     <Compile Include="DAL\NominaContext.cs" />
@@ -234,7 +235,7 @@
     <Content Include="Views\Departamento\Estructura.cshtml" />
     <Content Include="Views\Salario\ReporteNominaDepto.cshtml" />
     <Content Include="Views\Salario\EstructuraOrg.cshtml" />
-    <Content Include="Views\Home\Autenticar.cshtml" />
+    <Content Include="Views\Opciones\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -243,6 +244,7 @@
     <Folder Include="Views\DepartamentoDAL\" />
     <Folder Include="Views\DeptEmp\" />
     <Folder Include="Views\EmpleadoDAL\" />
+    <Folder Include="Views\Menu\" />
     <Folder Include="Views\SalarioDAL\" />
     <Folder Include="Views\Salary\" />
     <Folder Include="Views\Usuario\" />

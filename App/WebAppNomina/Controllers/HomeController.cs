@@ -19,6 +19,11 @@ namespace WebAppNomina.Controllers
             // Filtramos los cambios de auditoría realizados hoy (RF-08)
             var fechaHoy = DateTime.Now.Date;
             ViewBag.UltimosCambios = db.Auditorias.Count(a => a.fechaActualizacion >= fechaHoy);
+            return View();
+            }
+        public ActionResult Contact() // son los constructores de inicializacion de la pagina de contacto
+        {
+            ViewBag.Message = "593 CODE PLUS";
 
             return View();
         }

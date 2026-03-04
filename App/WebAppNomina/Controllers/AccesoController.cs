@@ -34,7 +34,7 @@ namespace WebAppNomina.Controllers
                     comando.ExecuteNonQuery();
 
                     int idResultado = Convert.ToInt32(comando.Parameters["id"].Value);
-                    if (idResultado > 0) return RedirectToAction("Index", "Home");
+                    if (idResultado > 0) return RedirectToAction("Index", "Opciones");
                     else
                     {
                         ViewData["Mensaje"] = comando.Parameters["mensaje"].Value.ToString();
