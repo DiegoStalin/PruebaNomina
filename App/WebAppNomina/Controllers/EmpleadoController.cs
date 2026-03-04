@@ -80,6 +80,14 @@ namespace WebAppNomina.Controllers
         {
             if (ModelState.IsValid)
             {
+                // --- CAMBIO PARA RNF-02: SEGURIDAD (HASH) ---
+                // Encriptamos la clave antes de cualquier otra validación o guardado
+                if (!string.IsNullOrEmpty(oEmpleado.clave))
+                {
+                    oEmpleado.clave = BCrypt.Net.BCrypt.HashPassword(oEmpleado.clave);
+                }
+                // --------------------------------------------
+
                 // RF-11: Validación de emp_no único
                 if (db.Empleados.Any(e => e.emp_no == oEmpleado.emp_no))
                 {
@@ -94,8 +102,7 @@ namespace WebAppNomina.Controllers
                     return View(oEmpleado);
                 }
 
-                oEmpleado.activo = true; // Por defecto el empleado nace activo
-                // hire_date suele venir de la vista, si no, se asigna aquí
+                oEmpleado.activo = true;
                 if (oEmpleado.hire_date == DateTime.MinValue) oEmpleado.hire_date = DateTime.Now;
 
                 db.Empleados.Add(oEmpleado);
@@ -132,6 +139,12 @@ namespace WebAppNomina.Controllers
 
                 // Usamos Entry para actualizar solo los campos necesarios
                 db.Entry(oEmpleado).State = EntityState.Modified;
+
+                // --- INICIO MODIFICACIÓN RNF-02 ---
+                // 2. IMPORTANTE: Evitamos que la clave (hash) se borre o cambie en la edición normal
+                db.Entry(oEmpleado).Property(x => x.clave).IsModified = false;
+                // --- FIN MODIFICACIÓN RNF-02 ---
+
 
                 // Evitamos que la fecha de contratación se pierda si no está en el formulario de edición
                 db.Entry(oEmpleado).Property(x => x.hire_date).IsModified = false;
