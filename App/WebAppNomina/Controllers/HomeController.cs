@@ -17,7 +17,7 @@ namespace WebAppNomina.Controllers
 
         public ActionResult About() // son los constructores de inicializacion de la pagina de acerca de
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "APP WEB NOMINA. ";
 
             return View();
         }

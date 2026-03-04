@@ -8,14 +8,13 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
+    <div class="contenedor-login-style">
+        <div class="tarjeta-login-style">
 
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - APP Web Nómina</p>
-        </footer>
+            @RenderBody()
+        </div>
     </div>
+
 
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container justify-content-center">
@@ -27,9 +26,6 @@
                     @Html.ActionLink("Inicio", "Index", "Home", null, new { @class = "nav-link" })
                 </li>
 
-                <li class="nav-item">
-                    @Html.ActionLink("Salarios", "Index", "Salario", null, new { @class = "nav-link" })
-                </li>
 
                 <li class="nav-item">
                     @Html.ActionLink("Acerca de", "About", "Home", null, new { @class = "nav-link" })
