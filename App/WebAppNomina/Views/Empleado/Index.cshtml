@@ -5,7 +5,6 @@
     ViewBag.Title = "Gestión de Empleados";
 }
 
-@* Vinculamos un CSS para que se vea ordenado *@
 <style>
     .contenedor-personalizado {
         padding: 20px;
@@ -25,6 +24,11 @@
         padding: 5px 10px;
         border-radius: 4px;
     }
+    /* Estilo para filas de inactivos */
+    .inactivo {
+        background-color: #f2dede !important;
+        color: #a94442;
+    }
 </style>
 
 <div class="contenedor-login-style">
@@ -32,30 +36,77 @@
         <h2><i class="glyphicon glyphicon-user"></i> @ViewBag.Title</h2>
         <hr />
 
-        <div class="well">
-            @using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new { @class = "form-inline" }))
-            {
-                <div class="form-group">
-                    <input type="text" name="buscar" class="form-control" placeholder="Buscar por Nombre o CI..." style="width: 300px;" />
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-search"></i> Consultar
-                </button>
-            }
-        </div>
+    <div class="well">
+        @using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new { @class = "form-inline" }))
+        {
+            <div class="form-group">
+                @* Mantenemos el valor de la búsqueda en el input *@
+                <input type="text" name="buscar" class="form-control" placeholder="Buscar por Nombre o CI..."
+                       style="width: 300px;" value="@ViewBag.CurrentFilter" />
+            </div>
+
+            @* RF-10: Filtro por campo clave (Estado Activo/Inactivo) *@
+            <div class="form-group" style="margin-left: 15px;">
+                <label>Ver Inactivos:</label>
+                <input type="checkbox" name="verInactivos" value="true" @(ViewBag.MostrandoInactivos == true ? "checked" : "") onchange="this.form.submit()" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
+                <i class="glyphicon glyphicon-search"></i> Consultar
+            </button>
+
+            <a href="@Url.Action("Index")" class="btn btn-default">Limpiar</a>
+        }
+    </div>
 
         <p>
             @Html.ActionLink("Registrar Nuevo Empleado", "Create", null, new { @class = "btn btn-success" })
         </p>
 
-        <table class="table table-hover table-bordered">
-            <thead>
-                <tr>
-                    <th>CI</th>
-                    <th>Nombre Completo</th>
-                    <th>Fecha Ingreso</th>
-                    <th>Correo</th>
-                    <th>Acciones</th>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>CI</th>
+                <th>Nombre Completo</th>
+                <th>Fecha Ingreso</th>
+                <th>Correo</th>
+                <th>Estado</th> @* Nueva columna para claridad *@
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="@(item.activo ? "" : "inactivo")">
+                    <td>@item.ci</td>
+                    <td>@item.first_name @item.last_name</td>
+                    <td>@item.hire_date.ToShortDateString()</td>
+                    <td>@item.correo</td>
+                    <td>
+                        @if (item.activo)
+                        {
+                            <span class="label label-success">Activo</span>
+                        }
+                        else
+                        {
+                            <span class="label label-danger">Inactivo</span>
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Editar", "Edit", new { id = item.emp_no }, new { @class = "btn btn-info btn-xs" })
+
+                        @if (item.activo)
+                        {
+                            <span>|</span>
+                            using (Html.BeginForm("Delete", "Empleado", new { id = item.emp_no }, FormMethod.Post, new { style = "display:inline;" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-desactivar btn-xs" onclick="return confirm('¿Está seguro de desactivar este registro?');">
+                                    <i class="glyphicon glyphicon-off"></i> Desactivar
+                                </button>
+                            }
+                        }
+                    </td>
                 </tr>
             </thead>
             <tbody>
