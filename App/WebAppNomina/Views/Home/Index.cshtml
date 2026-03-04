@@ -1,33 +1,75 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Panel Principal - Sistema de Nómina";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">APLICACION NOMINA</h1>
-        <p class="lead">primera App Web.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<div class="jumbotron shadow-sm" style="background-color: #f8f9fa; padding: 2rem; border-radius: 15px; margin-top: 20px;">
+    <h1 class="display-4 text-primary">Bienvenido al Sistema de Nómina</h1>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+    @if (Session["UsuarioNombre"] != null)
+    {
+        @* Eliminado (RF-07, RF-08, RF-11) para mayor limpieza visual *@
+        <p class="lead">Hola <strong>@Session["UsuarioNombre"]</strong>, bienvenido al panel de gestión de la empresa.</p>
+    }
+    else
+    {
+        <p class="lead">Por favor, inicie sesión para acceder a las funciones de administración.</p>
+    }
+
+    <hr class="my-4">
+
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card border-primary mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-muted"><i class="glyphicon glyphicon-user"></i> Empleados Activos</h5>
+                    <p class="h2">@ViewBag.TotalEmpleados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-info mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-muted"><i class="glyphicon glyphicon-refresh"></i> Cambios Hoy</h5>
+                    <p class="h2">@ViewBag.UltimosCambios</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="@Url.Action("Index", "Salario")" class="btn btn-primary btn-block p-3 shadow">
+                    <i class="glyphicon glyphicon-usd"></i> Gestionar Salarios
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Autenticar", "Home")" class="btn btn-success btn-block p-3 shadow">
+                    <i class="glyphicon glyphicon-log-in"></i> Iniciar Sesión
+                </a>
+            }
+        </div>
     </div>
-</main>
+</div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row mt-4">
+        <div class="col-md-4">
+            @* Texto limpio sin (RF-12) *@
+            <h3><i class="glyphicon glyphicon-briefcase"></i> Recursos Humanos</h3>
+            <p>Gestión integral de empleados, cargos, títulos y asignación de departamentos.</p>
+            <p><a class="btn btn-outline-secondary" href="@Url.Action("Index", "Empleado")">Ver Empleados &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            @* Texto limpio sin (RF-09) *@
+            <h3><i class="glyphicon glyphicon-list-alt"></i> Módulo de Reportes</h3>
+            <p>Generación de nómina vigente y exportación de auditorías a formatos Excel y PDF.</p>
+            <p><a class="btn btn-outline-secondary" href="@Url.Action("Auditoria", "Salario")">Ver Auditoría &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h3><i class="glyphicon glyphicon-lock"></i> Seguridad</h3>
+            <p>Control de acceso, gestión de sesiones activas y protección de datos críticos.</p>
+            <p><a class="btn btn-outline-danger" href="@Url.Action("Salir", "Home")">Cerrar Sesión &raquo;</a></p>
+        </div>
+    </div>
+}

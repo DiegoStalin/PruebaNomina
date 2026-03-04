@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using WebAppNomina.Models;
 using WebAppNomina.DAL;
@@ -55,98 +56,109 @@ namespace WebAppNomina.Controllers
             return View(listaPaginada);
         }
 
+        // GET: Empleado/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Empleado oEmpleado = db.Empleados.Find(id);
+            if (oEmpleado == null) return HttpNotFound();
+
+            return View(oEmpleado);
+        }
+
         // GET: Empleado/Create
         public ActionResult Create()
         {
             return View();
         }
 
+        // POST: Empleado/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Empleado oEmpleado)
         {
             if (ModelState.IsValid)
             {
-                // RF-11: Validación de Negocio (No fechas futuras)
-                if (oEmpleado.birth_date > DateTime.Now)
+                // RF-11: Validación de emp_no único
+                if (db.Empleados.Any(e => e.emp_no == oEmpleado.emp_no))
                 {
-                    ModelState.AddModelError("birth_date", "La fecha de nacimiento no puede ser futura.");
+                    ModelState.AddModelError("emp_no", "Este número de empleado ya existe.");
                     return View(oEmpleado);
                 }
 
-                // Blindaje SQL Server
-                if (oEmpleado.birth_date < new DateTime(1753, 1, 1))
+                // RF-11: Validación de correo único
+                if (db.Empleados.Any(e => e.correo == oEmpleado.correo))
                 {
-                    oEmpleado.birth_date = new DateTime(2000, 1, 1);
+                    ModelState.AddModelError("correo", "Este correo ya está registrado.");
+                    return View(oEmpleado);
                 }
 
-                oEmpleado.activo = true;
-                oEmpleado.hire_date = DateTime.Now;
+                oEmpleado.activo = true; // Por defecto el empleado nace activo
+                // hire_date suele venir de la vista, si no, se asigna aquí
+                if (oEmpleado.hire_date == DateTime.MinValue) oEmpleado.hire_date = DateTime.Now;
 
-                try
-                {
-                    db.Empleados.Add(oEmpleado);
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Error al guardar: " + ex.Message);
-                }
+                db.Empleados.Add(oEmpleado);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(oEmpleado);
         }
 
         // GET: Empleado/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            var oEmpleado = db.Empleados.Find(id);
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Empleado oEmpleado = db.Empleados.Find(id);
             if (oEmpleado == null) return HttpNotFound();
+
             return View(oEmpleado);
         }
 
+        // POST: Empleado/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Empleado oEmpleado)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                // RF-11: Validar correo único en edición (excluyendo al empleado actual)
+                if (db.Empleados.Any(e => e.correo == oEmpleado.correo && e.emp_no != oEmpleado.emp_no))
                 {
-                    var empleadoBD = db.Empleados.Find(oEmpleado.emp_no);
-
-                    if (empleadoBD != null)
-                    {
-                        empleadoBD.ci = oEmpleado.ci;
-                        empleadoBD.first_name = oEmpleado.first_name;
-                        empleadoBD.last_name = oEmpleado.last_name;
-                        empleadoBD.correo = oEmpleado.correo;
-                        empleadoBD.genero = oEmpleado.genero;
-                        empleadoBD.clave = oEmpleado.clave;
-                        empleadoBD.activo = oEmpleado.activo; // Permitir reactivar desde edición
-
-                        empleadoBD.birth_date = oEmpleado.birth_date < new DateTime(1753, 1, 1)
-                                                ? new DateTime(2000, 1, 1)
-                                                : oEmpleado.birth_date;
-
-                        db.Entry(empleadoBD).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
-                    return RedirectToAction("Index");
+                    ModelState.AddModelError("correo", "Este correo ya está en uso por otro empleado.");
+                    return View(oEmpleado);
                 }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al actualizar: " + ex.Message);
+
+                // Usamos Entry para actualizar solo los campos necesarios
+                db.Entry(oEmpleado).State = EntityState.Modified;
+
+                // Evitamos que la fecha de contratación se pierda si no está en el formulario de edición
+                db.Entry(oEmpleado).Property(x => x.hire_date).IsModified = false;
+
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(oEmpleado);
         }
 
-        // RF-02: Borrado Lógico
+        // GET: Empleado/Delete/5 (Vista de confirmación de desactivación)
+        public ActionResult Delete(int? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Empleado oEmpleado = db.Empleados.Find(id);
+            if (oEmpleado == null) return HttpNotFound();
+
+            return View(oEmpleado);
+        }
+
+        // POST: Empleado/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            // RF-02: Se realiza desactivación (borrado lógico), no borrado físico
             Empleado oEmpleado = db.Empleados.Find(id);
             if (oEmpleado != null)
             {
