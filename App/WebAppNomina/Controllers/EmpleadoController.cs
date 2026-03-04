@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -13,23 +14,23 @@ namespace WebAppNomina.Controllers
     {
         private NominaContext db = new NominaContext();
 
-        // GET: Empleado
-        // --- RF-10: Búsqueda y Filtros ---
-        public ActionResult Index(string buscar, bool? verInactivos)
+        // --- RF-10: Búsqueda y Filtros de Empleados ---
+        
+        public ActionResult Index(string buscar, bool? verInactivos, int? pagina)
         {
+            // 1. Configuración de Paginación (RNF-01)
+            int registrosPorPagina = 20;
+            int numeroPagina = (pagina ?? 1);
+
+            // 2. Consulta base
             var empleados = db.Empleados.AsQueryable();
 
-            // Filtro por estado (RF-02: Gestión de empleados activos/inactivos)
+            // 3. Filtros (RF-10)
             if (verInactivos == true)
-            {
                 empleados = empleados.Where(e => e.activo == false);
-            }
             else
-            {
                 empleados = empleados.Where(e => e.activo == true);
-            }
 
-            // Filtro de búsqueda por texto (RF-10)
             if (!string.IsNullOrEmpty(buscar))
             {
                 empleados = empleados.Where(e => e.first_name.Contains(buscar) ||
@@ -37,10 +38,22 @@ namespace WebAppNomina.Controllers
                                                  e.ci.Contains(buscar));
             }
 
+            // 4. Lógica de Paginación y Envío de datos
+            int totalRegistros = empleados.Count();
+
+            var listaPaginada = empleados
+                .OrderBy(e => e.last_name)
+                .Skip((numeroPagina - 1) * registrosPorPagina)
+                .Take(registrosPorPagina)
+                .ToList();
+
+            // 5. Datos para la navegación en la Vista
             ViewBag.CurrentFilter = buscar;
             ViewBag.MostrandoInactivos = verInactivos;
+            ViewBag.PaginaActual = numeroPagina;
+            ViewBag.TotalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-            return View(empleados.ToList());
+            return View(listaPaginada);
         }
 
         // GET: Empleado/Details/5
