@@ -31,9 +31,10 @@
     }
 </style>
 
-<div class="contenedor-personalizado">
-    <h2><i class="glyphicon glyphicon-user"></i> @ViewBag.Title</h2>
-    <hr />
+<div class="contenedor-login-style">
+    <div class="tarjeta-login-style">
+        <h2><i class="glyphicon glyphicon-user"></i> @ViewBag.Title</h2>
+        <hr />
 
     <div class="well">
         @using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new { @class = "form-inline" }))
@@ -58,9 +59,9 @@
         }
     </div>
 
-    <p>
-        @Html.ActionLink("Registrar Nuevo Empleado", "Create", null, new { @class = "btn btn-success" })
-    </p>
+        <p>
+            @Html.ActionLink("Registrar Nuevo Empleado", "Create", null, new { @class = "btn btn-success" })
+        </p>
 
     <table class="table table-hover table-bordered">
         <thead>
@@ -107,7 +108,29 @@
                         }
                     </td>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ci</td>
+                        <td>@item.first_name @item.last_name</td>
+                        <td>@item.hire_date.ToShortDateString()</td>
+                        <td>@item.correo</td>
+                        <td>
+                            @Html.ActionLink("Editar", "Edit", new { id = item.emp_no }, new { @class = "btn btn-info btn-xs" }) |
+
+                            @using (Html.BeginForm("Delete", "Empleado", new { id = item.emp_no }, FormMethod.Post, new { style = "display:inline;" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-desactivar btn-xs" onclick="return confirm('¿Está seguro de desactivar este registro?');">
+                                    <i class="glyphicon glyphicon-off"></i> Desactivar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
