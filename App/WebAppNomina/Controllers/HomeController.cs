@@ -1,52 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Data.SqlClient;
+using System.Web.Security; // Necesario para FormsAuthentication
 using WebAppNomina.DAL;
+using System.Data.Entity;
 
 namespace WebAppNomina.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index() // son los constructores de inicializacion de la PARTE WEB, este es de pagina de index
-        {
-            return View();
-        }
+        private NominaContext db = new NominaContext();
 
-        public ActionResult About() // son los constructores de inicializacion de la pagina de acerca de
+        public ActionResult Index()
         {
-            ViewBag.Message = "Your application description page.";
+            // RNF-05: Dashboard informativo para mejorar la usabilidad
+            ViewBag.TotalEmpleados = db.Empleados.Count(e => e.activo);
 
-            return View();
-        }
-
-        public ActionResult Contact() // son los constructores de inicializacion de la pagina de contacto
-        {
-            ViewBag.Message = "Your contact page.";
+            // Filtramos los cambios de auditoría realizados hoy (RF-08)
+            var fechaHoy = DateTime.Now.Date;
+            ViewBag.UltimosCambios = db.Auditorias.Count(a => a.fechaActualizacion >= fechaHoy);
 
             return View();
         }
 
-        public ActionResult Autenticar() // son los constructores de inicializacion de la pagina de contacto
+        // RF-01: Página de entrada
+        public ActionResult Autenticar()
         {
-            ViewBag.Message = "Página de Autenticación.";
-
             return View();
         }
 
-        public ActionResult ProbarConexion()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(string usuario, string password)
         {
-            Conexion cn = new Conexion();
+            // RF-01: Validamos contra la tabla de Empleados (usando correo como usuario)
+            // Buscamos un empleado activo que coincida con el correo y la clave ingresada
+            var user = db.Empleados.FirstOrDefault(e => e.correo == usuario && e.clave == password && e.activo);
 
-            using (SqlConnection conn = cn.ObtenerConexion())
+            if (user != null)
             {
-                conn.Open();
+                // RF-12: Creamos la sesión de usuario
+                FormsAuthentication.SetAuthCookie(user.correo, false);
+
+                // Guardamos el nombre para mostrarlo en el Layout
+                Session["UsuarioNombre"] = user.first_name + " " + user.last_name;
+
+                return RedirectToAction("Index");
             }
 
-            return Content("Conexión exitosa");
+            // Si falla, regresamos a la vista con un mensaje de error
+            ViewBag.Error = "Usuario o contraseña incorrectos.";
+            return View("Autenticar");
         }
 
+        // Método para cerrar sesión
+        public ActionResult Salir()
+        {
+            FormsAuthentication.SignOut();
+            Session.Clear();
+            return RedirectToAction("Autenticar");
+        }
     }
 }

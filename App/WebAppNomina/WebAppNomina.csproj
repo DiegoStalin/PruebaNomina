@@ -234,6 +234,7 @@
     <Content Include="Views\Departamento\Estructura.cshtml" />
     <Content Include="Views\Salario\ReporteNominaDepto.cshtml" />
     <Content Include="Views\Salario\EstructuraOrg.cshtml" />
+    <Content Include="Views\Home\Autenticar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
