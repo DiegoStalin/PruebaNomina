@@ -4,12 +4,11 @@
 -- DDL de la DB Nómina:
 create database Nomina;
 use Nomina;
-/*
+
 CREATE TABLE departments (
 dept_no INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
 dept_name NVARCHAR(50) NOT NULL);
-*/
-/*
+
 CREATE TABLE employees (
 emp_no INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
 ci NVARCHAR(50) NOT NULL,
@@ -20,29 +19,7 @@ gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F')),
 hire_date DATE NOT NULL,
 correo NVARCHAR(50)
 );
-*/
---------------------------
-CREATE TABLE Departamentoes (
-    dept_no INT IDENTITY(1,1) PRIMARY KEY,
-    dept_name VARCHAR(50) NOT NULL,
-    activo BIT DEFAULT 1
-);
------------------------------
---TABLA Empleadoes
-CREATE TABLE Empleadoes (
-    emp_no INT IDENTITY(1,1) PRIMARY KEY,
-    ci VARCHAR(20) NOT NULL,
-    birth_date DATE NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    gender CHAR(1) NULL,
-    hire_date DATE NOT NULL,
-    correo VARCHAR(50) NULL,
-    clave VARCHAR(100) NULL,
-    genero VARCHAR(20) NULL,
-    activo BIT DEFAULT 1
-);
----------------------
+
 CREATE TABLE dept_emp (
 emp_no INT NOT NULL,
 dept_no INT NOT NULL,
@@ -66,7 +43,7 @@ CONSTRAINT Fk_Detalle_manager_emp
 CONSTRAINT Fk_Detalle_manager_dept
 	FOREIGN KEY (dept_no) REFERENCES departments (dept_no)
 );
-/*
+
 CREATE TABLE salaries (
 emp_no INT NOT NULL,
 salary BIGINT NOT NULL,
@@ -76,17 +53,6 @@ CONSTRAINT Pk_Detalle_salaries PRIMARY KEY (emp_no, from_date),
 CONSTRAINT Fk_Detalle_salaries
 	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
-*/
---------------
-CREATE TABLE Salarios (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    emp_no INT NOT NULL,
-    salary BIGINT NOT NULL,
-    from_date DATE NOT NULL,
-    to_date DATE NULL,
-    CONSTRAINT FK_Salarios_Empleadoes FOREIGN KEY (emp_no) REFERENCES dbo.Empleadoes(emp_no)
-);
------------------------
 
 CREATE TABLE titles (
 emp_no INT NOT NULL,
@@ -97,7 +63,7 @@ CONSTRAINT Pk_detalle_titles PRIMARY KEY (emp_no, title, from_date),
 CONSTRAINT Fk_detalle_titles
 	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
-/*
+
 CREATE TABLE users (
 emp_no INT NOT NULL,
 usuario VARCHAR(50) NOT NULL,
@@ -107,16 +73,7 @@ CONSTRAINT Uq_usuario UNIQUE (usuario),
 CONSTRAINT FK_Detalle_users
 	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
-*/
------------------
-CREATE TABLE Usuarios (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    nombreUsuario VARCHAR(50),
-    clave VARCHAR(100),
-    emp_no INT,
-    CONSTRAINT FK_Usuarios_Empleadoes FOREIGN KEY (emp_no) REFERENCES dbo.Empleadoes(emp_no)
-);
---------------------------
+
 CREATE TABLE AsignacionDepartamentos (
     emp_no INT NOT NULL,
     dept_no INT NOT NULL,
