@@ -24,17 +24,15 @@ namespace WebAppNomina.Controllers
 
         public ActionResult Contact() // son los constructores de inicializacion de la pagina de contacto
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "593 CODE PLUS";
 
             return View();
         }
 
-        public ActionResult Autenticar() // son los constructores de inicializacion de la pagina de contacto
-        {
-            ViewBag.Message = "Página de Autenticación.";
+  
 
-            return View();
-        }
+
+
 
         public ActionResult ProbarConexion()
         {
