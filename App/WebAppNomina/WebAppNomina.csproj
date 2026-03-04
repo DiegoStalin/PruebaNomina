@@ -150,6 +150,10 @@
     <Compile Include="Migrations\202603022058100_AgregarCampoActivo.Designer.cs">
       <DependentUpon>202603022058100_AgregarCampoActivo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202603042016107_AjusteNombreTablaFinal..cs" />
+    <Compile Include="Migrations\202603042016107_AjusteNombreTablaFinal..Designer.cs">
+      <DependentUpon>202603042016107_AjusteNombreTablaFinal..cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AsignacionDepto.cs" />
     <Compile Include="Models\Usuario.cs" />
@@ -282,6 +286,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202603022058100_AgregarCampoActivo.resx">
       <DependentUpon>202603022058100_AgregarCampoActivo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603042016107_AjusteNombreTablaFinal..resx">
+      <DependentUpon>202603042016107_AjusteNombreTablaFinal..cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
