@@ -7,6 +7,7 @@ namespace WebAppNomina.Models
     public class Empleado
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int emp_no { get; set; }
 
         [Required]
