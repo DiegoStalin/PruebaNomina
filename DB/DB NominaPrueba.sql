@@ -1,14 +1,15 @@
 --Integracion Software
 --Base da Datos Nomina 
 
--- DDL de la DB Nómina:
+-- DDL de la DB NÃ³mina:
 create database Nomina;
 use Nomina;
-
+/*
 CREATE TABLE departments (
 dept_no INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
 dept_name NVARCHAR(50) NOT NULL);
-
+*/
+/*
 CREATE TABLE employees (
 emp_no INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
 ci NVARCHAR(50) NOT NULL,
@@ -19,7 +20,29 @@ gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F')),
 hire_date DATE NOT NULL,
 correo NVARCHAR(50)
 );
-
+*/
+--------------------------
+CREATE TABLE Departamentoes (
+    dept_no INT IDENTITY(1,1) PRIMARY KEY,
+    dept_name VARCHAR(50) NOT NULL,
+    activo BIT DEFAULT 1
+);
+-----------------------------
+--TABLA Empleadoes
+CREATE TABLE Empleadoes (
+    emp_no INT IDENTITY(1,1) PRIMARY KEY,
+    ci VARCHAR(20) NOT NULL,
+    birth_date DATE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    gender CHAR(1) NULL,
+    hire_date DATE NOT NULL,
+    correo VARCHAR(50) NULL,
+    clave VARCHAR(100) NULL,
+    genero VARCHAR(20) NULL,
+    activo BIT DEFAULT 1
+);
+---------------------
 CREATE TABLE dept_emp (
 emp_no INT NOT NULL,
 dept_no INT NOT NULL,
@@ -43,7 +66,7 @@ CONSTRAINT Fk_Detalle_manager_emp
 CONSTRAINT Fk_Detalle_manager_dept
 	FOREIGN KEY (dept_no) REFERENCES departments (dept_no)
 );
-
+/*
 CREATE TABLE salaries (
 emp_no INT NOT NULL,
 salary BIGINT NOT NULL,
@@ -53,6 +76,17 @@ CONSTRAINT Pk_Detalle_salaries PRIMARY KEY (emp_no, from_date),
 CONSTRAINT Fk_Detalle_salaries
 	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
+*/
+--------------
+CREATE TABLE Salarios (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    emp_no INT NOT NULL,
+    salary BIGINT NOT NULL,
+    from_date DATE NOT NULL,
+    to_date DATE NULL,
+    CONSTRAINT FK_Salarios_Empleadoes FOREIGN KEY (emp_no) REFERENCES dbo.Empleadoes(emp_no)
+);
+-----------------------
 
 CREATE TABLE titles (
 emp_no INT NOT NULL,
@@ -63,7 +97,7 @@ CONSTRAINT Pk_detalle_titles PRIMARY KEY (emp_no, title, from_date),
 CONSTRAINT Fk_detalle_titles
 	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
-
+/*
 CREATE TABLE users (
 emp_no INT NOT NULL,
 usuario VARCHAR(50) NOT NULL,
@@ -73,8 +107,36 @@ CONSTRAINT Uq_usuario UNIQUE (usuario),
 CONSTRAINT FK_Detalle_users
 	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
-
--- DML de la DB Nómina (10 registros por tabla):
+*/
+-----------------
+CREATE TABLE Usuarios (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombreUsuario VARCHAR(50),
+    clave VARCHAR(100),
+    emp_no INT,
+    CONSTRAINT FK_Usuarios_Empleadoes FOREIGN KEY (emp_no) REFERENCES dbo.Empleadoes(emp_no)
+);
+--------------------------
+CREATE TABLE AsignacionDepartamentos (
+    emp_no INT NOT NULL,
+    dept_no INT NOT NULL,
+    from_date DATE NOT NULL,
+    to_date DATE NULL,
+    PRIMARY KEY (emp_no, dept_no),
+    CONSTRAINT FK_Asig_Empleadoes FOREIGN KEY (emp_no) REFERENCES dbo.Empleadoes(emp_no),
+    CONSTRAINT FK_Asig_Deptos FOREIGN KEY (dept_no) REFERENCES dbo.Departamentoes(dept_no)
+);
+----------------------------------------
+CREATE TABLE LogAuditoriaSalarios (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    usuario VARCHAR(100),
+    fechaActualizacion DATETIME DEFAULT GETDATE(),
+    DetalleCambio VARCHAR(MAX),
+    salario BIGINT,
+    emp_no INT
+);
+--------------------------------------------
+-- DML de la DB NÃ³mina (10 registros por tabla):
 -- Tabla departments:
 INSERT INTO departments (dept_name)
 VALUES	('Ventas'),
@@ -84,9 +146,9 @@ VALUES	('Ventas'),
 		('Financiero'),
 		('Logistica'),
 		('RRHH'),
-		('Contratación Pública'),
-		('Jurídico'),
-		('Investigación'),
+		('ContrataciÃ³n PÃºblica'),
+		('JurÃ­dico'),
+		('InvestigaciÃ³n'),
 		('Comercio Exterior');
 
 -- Tabla employees:
@@ -94,14 +156,14 @@ INSERT INTO employees (ci, birth_date, first_name, last_name, gender, hire_date,
 VALUES	
 ('1715658795', '1985-05-10', 'Juan', 'Lopez', 'M','2020-02-03', 'juanlopez@nomina.com'),
 ('1723456789', '1990-03-12', 'Carlos', 'Mena', 'M', '2018-01-15', 'cmena@nomina.com'),
-('0912345678', '1988-07-22', 'María', 'Pérez', 'F', '2019-04-10', 'mperez@nomina.com'),
+('0912345678', '1988-07-22', 'MarÃ­a', 'PÃ©rez', 'F', '2019-04-10', 'mperez@nomina.com'),
 ('1102345678', '1992-11-05', 'Luis', 'Andrade', 'M', '2020-06-01', 'landrade@nomina.com'),
 ('0803456789', '1985-02-18', 'Ana', 'Torres', 'F', '2017-09-20', 'atorres@nomina.com'),
 ('0604567890', '1995-08-30', 'Diego', 'Vera', 'M', '2021-03-12', 'dvera@nomina.com'),
-('1705678901', '1983-12-14', 'Patricia', 'Ríos', 'F', '2016-11-01', 'prios@nomina.com'),
+('1705678901', '1983-12-14', 'Patricia', 'RÃ­os', 'F', '2016-11-01', 'prios@nomina.com'),
 ('1006789012', '1991-05-09', 'Jorge', 'Salazar', 'M', '2019-08-19', 'jsalazar@nomina.com'),
-('1407890123', '1987-10-25', 'Lucía', 'Morales', 'F', '2018-02-05', 'lmorales@nomina.com'),
-('0308901234', '1994-06-17', 'Andrés', 'Castillo', 'M', '2022-01-10', 'acastillo@nomina.com');
+('1407890123', '1987-10-25', 'LucÃ­a', 'Morales', 'F', '2018-02-05', 'lmorales@nomina.com'),
+('0308901234', '1994-06-17', 'AndrÃ©s', 'Castillo', 'M', '2022-01-10', 'acastillo@nomina.com');
 
 --Tabla dept_emp:
 INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date)
@@ -175,19 +237,19 @@ VALUES
 --Tabla titles:
 INSERT INTO titles (emp_no, title, from_date, to_date)
 VALUES	
-(1, 'Jefe Jurídico','2023-02-03', '9999-12-31'),
+(1, 'Jefe JurÃ­dico','2023-02-03', '9999-12-31'),
 (2, 'Analista TIC', '2018-01-15', '2020-12-31'),
 (2, 'Administrador de Sistemas', '2021-01-01', '9999-12-31'),
 
 (3, 'Asistente RRHH', '2019-04-10', '9999-12-31'),
 
-(4, 'Auxiliar Logístico', '2020-06-01', '2022-05-31'),
-(4, 'Coordinador Logístico', '2022-06-01', '9999-12-31'),
+(4, 'Auxiliar LogÃ­stico', '2020-06-01', '2022-05-31'),
+(4, 'Coordinador LogÃ­stico', '2022-06-01', '9999-12-31'),
 
 (5, 'Asesor Comercial', '2017-09-20', '2020-08-31'),
 (5, 'Jefe de Ventas', '2020-09-01', '9999-12-31'),
 
-(6, 'Soporte Técnico', '2021-03-12', '9999-12-31'),
+(6, 'Soporte TÃ©cnico', '2021-03-12', '9999-12-31'),
 
 (7, 'Director General', '2016-11-01', '9999-12-31'),
 
@@ -228,7 +290,7 @@ on de.dept_no = d.dept_no;
 
 select
 e.first_name + e.last_name as 'Nombre y Apellido',
-e.hire_date as 'fecha contratación',
+e.hire_date as 'fecha contrataciÃ³n',
 de.dept_name
 from employees e
 inner join dept_emp d
@@ -634,7 +696,7 @@ begin
 end
 
 -- EJERCICIO EN CLASE: 
--- Insertar employee + user + salary + title + dept_emp en una sola transacción.
+-- Insertar employee + user + salary + title + dept_emp en una sola transacciÃ³n.
 
 CREATE PROCEDURE sp_InsertarTodo
 (
@@ -702,7 +764,7 @@ BEGIN
     END TRY
     BEGIN CATCH
         ROLLBACK;
-        PRINT 'ERROR EN LA TRANSACCIÓN';
+        PRINT 'ERROR EN LA TRANSACCIÃ“N';
         THROW;
     END CATCH
 END;
@@ -787,7 +849,7 @@ and sal.to_date='9999-12-31'
 
 select * from Salarios_mayores1000
 
--- una vista que me indique quienes tienen mas de 2 años trabajando
+-- una vista que me indique quienes tienen mas de 2 aÃ±os trabajando
 create view Trabaja_mas_2_anios
 as
 select emp.first_name + ' ' + emp.last_name Nombre_Empleado,
