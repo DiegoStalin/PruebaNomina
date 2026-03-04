@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -13,29 +14,22 @@ namespace WebAppNomina.Controllers
         private NominaContext db = new NominaContext();
 
         // --- RF-10: Búsqueda y Filtros de Empleados ---
-        public ActionResult Index(string buscar, bool? verInactivos)
+        
+        public ActionResult Index(string buscar, bool? verInactivos, int? pagina)
         {
-            // Iniciamos la consulta base
+            // 1. Configuración de Paginación (RNF-01)
+            int registrosPorPagina = 20;
+            int numeroPagina = (pagina ?? 1);
+
+            // 2. Consulta base
             var empleados = db.Empleados.AsQueryable();
 
-            // 1. Filtro por Estado (Campo clave: Activo) - RF-10
+            // 3. Filtros (RF-10)
             if (verInactivos == true)
-            {
-                // Si el usuario marca la casilla, vemos solo los inactivos
                 empleados = empleados.Where(e => e.activo == false);
-            }
-            else if (verInactivos == false)
-            {
-                // Si la marca como "No", vemos solo activos
-                empleados = empleados.Where(e => e.activo == true);
-            }
             else
-            {
-                // Por defecto, solo mostramos los activos para no saturar la vista
                 empleados = empleados.Where(e => e.activo == true);
-            }
 
-            // 2. Filtro por Texto (Nombre, Apellido o CI) - RF-10
             if (!string.IsNullOrEmpty(buscar))
             {
                 empleados = empleados.Where(e => e.first_name.Contains(buscar) ||
@@ -43,11 +37,22 @@ namespace WebAppNomina.Controllers
                                                  e.ci.Contains(buscar));
             }
 
-            // Guardamos el estado del filtro para la vista
+            // 4. Lógica de Paginación y Envío de datos
+            int totalRegistros = empleados.Count();
+
+            var listaPaginada = empleados
+                .OrderBy(e => e.last_name)
+                .Skip((numeroPagina - 1) * registrosPorPagina)
+                .Take(registrosPorPagina)
+                .ToList();
+
+            // 5. Datos para la navegación en la Vista
             ViewBag.CurrentFilter = buscar;
             ViewBag.MostrandoInactivos = verInactivos;
+            ViewBag.PaginaActual = numeroPagina;
+            ViewBag.TotalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-            return View(empleados.ToList());
+            return View(listaPaginada);
         }
 
         // GET: Empleado/Create
