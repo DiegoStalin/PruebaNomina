@@ -10,12 +10,21 @@ using WebAppNomina.DAL;
 
 namespace WebAppNomina.Controllers
 {
+    /// <summary>
+    /// Controlador para la gestión administrativa de empleados.
+    /// Implementa RNF-03 (Mantenibilidad) mediante documentación técnica y separación de lógica.
+    /// </summary>
     public class EmpleadoController : Controller
     {
         private NominaContext db = new NominaContext();
 
-        // --- RF-10: Búsqueda y Filtros de Empleados ---
-        
+        /// <summary>
+        /// Lista los empleados con soporte para búsqueda (RF-10) y paginación (RNF-01).
+        /// </summary>
+        /// <param name="buscar">Criterio de búsqueda por nombre, apellido o CI.</param>
+        /// <param name="verInactivos">Filtro para visualizar empleados con borrado lógico.</param>
+        /// <param name="pagina">Número de página actual para la navegación.</param>
+        /// <returns>Vista principal con lista de empleados filtrada y paginada.</returns>
         public ActionResult Index(string buscar, bool? verInactivos, int? pagina)
         {
             // 1. Configuración de Paginación (RNF-01)
@@ -47,7 +56,7 @@ namespace WebAppNomina.Controllers
                 .Take(registrosPorPagina)
                 .ToList();
 
-            // 5. Datos para la navegación en la Vista
+            // 5. Datos para la navegación en la Vista (ViewBag para evitar pérdida de estado)
             ViewBag.CurrentFilter = buscar;
             ViewBag.MostrandoInactivos = verInactivos;
             ViewBag.PaginaActual = numeroPagina;
@@ -56,7 +65,11 @@ namespace WebAppNomina.Controllers
             return View(listaPaginada);
         }
 
-        // GET: Empleado/Details/5
+        /// <summary>
+        /// Muestra el detalle informativo de un empleado específico.
+        /// </summary>
+        /// <param name="id">Identificador único del empleado.</param>
+        /// <returns>Vista con los datos del empleado o error si no existe.</returns>
         public ActionResult Details(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -67,26 +80,31 @@ namespace WebAppNomina.Controllers
             return View(oEmpleado);
         }
 
-        // GET: Empleado/Create
+        /// <summary>
+        /// Muestra el formulario para registrar un nuevo empleado.
+        /// </summary>
+        /// <returns>Vista de creación.</returns>
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Empleado/Create
+        /// <summary>
+        /// Procesa el registro de un nuevo empleado aplicando Hash de seguridad.
+        /// </summary>
+        /// <param name="oEmpleado">Objeto que contiene los datos del nuevo empleado.</param>
+        /// <returns>Redirección al listado o vista con errores de validación.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Empleado oEmpleado)
         {
             if (ModelState.IsValid)
             {
-                // --- CAMBIO PARA RNF-02: SEGURIDAD (HASH) ---
-                // Encriptamos la clave antes de cualquier otra validación o guardado
+                // RNF-02: Encriptamos la clave mediante BCrypt antes de persistir
                 if (!string.IsNullOrEmpty(oEmpleado.clave))
                 {
                     oEmpleado.clave = BCrypt.Net.BCrypt.HashPassword(oEmpleado.clave);
                 }
-                // --------------------------------------------
 
                 // RF-11: Validación de emp_no único
                 if (db.Empleados.Any(e => e.emp_no == oEmpleado.emp_no))
@@ -112,7 +130,11 @@ namespace WebAppNomina.Controllers
             return View(oEmpleado);
         }
 
-        // GET: Empleado/Edit/5
+        /// <summary>
+        /// Obtiene los datos del empleado para ser editados.
+        /// </summary>
+        /// <param name="id">ID del empleado.</param>
+        /// <returns>Vista de edición con datos cargados.</returns>
         public ActionResult Edit(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -123,30 +145,28 @@ namespace WebAppNomina.Controllers
             return View(oEmpleado);
         }
 
-        // POST: Empleado/Edit/5
+        /// <summary>
+        /// Actualiza la información de un empleado protegiendo la integridad del Hash.
+        /// </summary>
+        /// <param name="oEmpleado">Objeto con los cambios del empleado.</param>
+        /// <returns>Redirección al listado tras actualización exitosa.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Empleado oEmpleado)
         {
             if (ModelState.IsValid)
             {
-                // RF-11: Validar correo único en edición (excluyendo al empleado actual)
+                // RF-11: Validar correo único excluyendo al registro actual
                 if (db.Empleados.Any(e => e.correo == oEmpleado.correo && e.emp_no != oEmpleado.emp_no))
                 {
                     ModelState.AddModelError("correo", "Este correo ya está en uso por otro empleado.");
                     return View(oEmpleado);
                 }
 
-                // Usamos Entry para actualizar solo los campos necesarios
                 db.Entry(oEmpleado).State = EntityState.Modified;
 
-                // --- INICIO MODIFICACIÓN RNF-02 ---
-                // 2. IMPORTANTE: Evitamos que la clave (hash) se borre o cambie en la edición normal
+                // RNF-02: Se excluye la propiedad 'clave' de la actualización para no perder el Hash original
                 db.Entry(oEmpleado).Property(x => x.clave).IsModified = false;
-                // --- FIN MODIFICACIÓN RNF-02 ---
-
-
-                // Evitamos que la fecha de contratación se pierda si no está en el formulario de edición
                 db.Entry(oEmpleado).Property(x => x.hire_date).IsModified = false;
 
                 db.SaveChanges();
@@ -155,7 +175,10 @@ namespace WebAppNomina.Controllers
             return View(oEmpleado);
         }
 
-        // GET: Empleado/Delete/5 (Vista de confirmación de desactivación)
+        /// <summary>
+        /// Muestra la confirmación de baja (borrado lógico) de un empleado.
+        /// </summary>
+        /// <param name="id">ID del empleado.</param>
         public ActionResult Delete(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -166,15 +189,18 @@ namespace WebAppNomina.Controllers
             return View(oEmpleado);
         }
 
-        // POST: Empleado/Delete/5
+        /// <summary>
+        /// Ejecuta el borrado lógico del empleado (RF-02) cambiando su estado de actividad.
+        /// </summary>
+        /// <param name="id">ID del empleado a desactivar.</param>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            // RF-02: Se realiza desactivación (borrado lógico), no borrado físico
             Empleado oEmpleado = db.Empleados.Find(id);
             if (oEmpleado != null)
             {
+                // RF-02: Desactivación, no borrado físico para mantener integridad histórica
                 oEmpleado.activo = false;
                 db.Entry(oEmpleado).State = EntityState.Modified;
                 db.SaveChanges();
@@ -182,6 +208,9 @@ namespace WebAppNomina.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Libera los recursos de la conexión a la base de datos.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposing) db.Dispose();
