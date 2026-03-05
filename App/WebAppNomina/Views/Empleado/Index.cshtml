@@ -31,9 +31,10 @@
     }
 </style>
 
-<div class="contenedor-personalizado">
-    <h2><i class="glyphicon glyphicon-user"></i> @ViewBag.Title</h2>
-    <hr />
+<div class="contenedor-login-style">
+    <div class="tarjeta-login-style">
+        <h2><i class="glyphicon glyphicon-user"></i> @ViewBag.Title</h2>
+        <hr />
 
     <div class="well">
         @using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new { @class = "form-inline" }))
@@ -58,9 +59,9 @@
         }
     </div>
 
-    <p>
-        @Html.ActionLink("Registrar Nuevo Empleado", "Create", null, new { @class = "btn btn-success" })
-    </p>
+        <p>
+            @Html.ActionLink("Registrar Nuevo Empleado", "Create", null, new { @class = "btn btn-success" })
+        </p>
 
     <table class="table table-hover table-bordered">
         <thead>
@@ -110,4 +111,18 @@
             }
         </tbody>
     </table>
+
+
+
+    <hr /> <div class="text-center">
+        <p>Página @ViewBag.PaginaActual de @ViewBag.TotalPaginas</p>
+        <ul class="pagination">
+            @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
+            {
+                <li class="@(i == ViewBag.PaginaActual ? "active" : "")" style="display:inline; margin-right:5px;">
+                    @Html.ActionLink(i.ToString(), "Index", new { pagina = i, buscar = ViewBag.CurrentFilter, verInactivos = ViewBag.MostrandoInactivos }, new { @class = "btn btn-default" })
+                </li>
+            }
+        </ul>
+    </div>
 </div>
