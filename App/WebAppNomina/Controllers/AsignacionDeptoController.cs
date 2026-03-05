@@ -76,6 +76,7 @@ namespace WebAppNomina.Controllers
             return View(model);
         }
 
+
         /// <summary>
         /// Elimina un registro de asignación específico.
         /// </summary>
